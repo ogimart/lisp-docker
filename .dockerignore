@@ -1,0 +1,7 @@
+# Ignore everything
+*
+
+# Allow
+!/Makefile
+!/*.lisp
+!/*.asd

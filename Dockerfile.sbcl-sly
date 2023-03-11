@@ -1,0 +1,11 @@
+FROM ogimart/sbcl-dev:latest
+
+### Sly
+RUN sbcl --non-interactive --load ~/quicklisp/setup.lisp \
+    --eval "(ql:quickload :slynk)"
+    # --eval "(ql-util:without-prompting (ql:add-to-init-file))"
+
+### REPL
+CMD sbcl --load ~/quicklisp/setup.lisp \
+    --eval "(ql:quickload :slynk)" \
+    --eval "(slynk:create-server :port 4005 :dont-close t :interface \"0.0.0.0\")"

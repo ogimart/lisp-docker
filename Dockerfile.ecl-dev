@@ -1,0 +1,16 @@
+FROM debian:bullseye-slim
+
+### Install
+RUN apt update
+RUN apt upgrade
+RUN apt install -y git wget make gcc
+
+### Build
+WORKDIR /build-lisp
+# ecl
+RUN git clone https://gitlab.com/embeddable-common-lisp/ecl.git
+RUN cd ecl && ./configure && make -j8 && make install
+
+### Clean
+WORKDIR /
+RUN rm -rf /build-lisp

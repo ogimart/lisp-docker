@@ -1,0 +1,12 @@
+FROM ogimart/ecl-dev:latest AS build
+
+### BUILD APP
+WORKDIR /build-app
+COPY . .
+RUN make clean && make ecl-app
+
+### RUN
+FROM gcr.io/distroless/base-debian11:nonroot
+COPY --from=build /usr/local/lib/libecl.so.21.2.1 /usr/lib/libecl.so.21.2
+COPY --from=build /build-app/app /usr/bin/
+CMD ["app"]

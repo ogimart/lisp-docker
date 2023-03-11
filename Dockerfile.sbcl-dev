@@ -1,0 +1,21 @@
+FROM debian:bullseye-slim
+
+### Install
+RUN apt update
+RUN apt upgrade
+RUN apt install -y make gcc wget bzip2 sbcl
+
+### Build
+WORKDIR /build-lisp
+RUN wget http://prdownloads.sourceforge.net/sbcl/sbcl-2.3.2-source.tar.bz2?download -O sbcl-2.3.2-source.tar.bz2
+RUN tar -xvf sbcl-2.3.2-source.tar.bz2
+RUN cd sbcl-2.3.2 && sh make.sh && sh install.sh
+
+## QuickLisp
+RUN wget https://beta.quicklisp.org/quicklisp.lisp -O quicklisp.lisp
+RUN sbcl --non-interactive --load quicklisp.lisp \
+    --eval "(quicklisp-quickstart:install)"
+
+### Clean
+WORKDIR /
+RUN rm -rf /build-lisp

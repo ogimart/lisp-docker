@@ -1,0 +1,11 @@
+FROM ogimart/ecl-dev:latest
+
+### SLY
+RUN ecl --nodebug \
+    --eval "(require 'ecl-quicklisp)" \
+    --eval "(ql:quickload :slynk)"
+
+### REPL
+CMD ecl --eval "(require 'ecl-quicklisp)" \
+    --eval "(ql:quickload :slynk)" \
+    --eval "(slynk:create-server :port 4005 :dont-close t :interface \"0.0.0.0\")"

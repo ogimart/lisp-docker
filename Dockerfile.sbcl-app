@@ -1,0 +1,11 @@
+FROM ogimart/sbcl-dev:latest AS build
+
+### BUILD APP
+WORKDIR /build-app
+COPY . .
+RUN make clean && make sbcl-app
+
+### RUN
+FROM gcr.io/distroless/base-debian11:nonroot
+COPY --from=build /build-app/app /usr/bin/
+CMD ["app"]

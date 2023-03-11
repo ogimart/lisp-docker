@@ -1,0 +1,98 @@
+* lisp-docker
+
+Minimal Common Lisp (SBCL, ECL) Docker images
+
+** Base Image
+
+**Debian 11 (bullseye) Slim**
+
+The base image is used to build Common Lisp from source.
+
+** Deployment Image
+
+**Distroless Debian 11**
+
+Uses base image to build standalone application, then copies the executable to
+[[https://github.com/GoogleContainerTools/distroless][distroless]] /nonroot/ deployment image.
+
+*** SBCL
+
+#+begin_src dockerfile
+  FROM ogimart/sbcl-dev:latest AS build
+
+  WORKDIR /build-app
+  COPY . .
+  RUN make clean && make sbcl-app
+
+  FROM gcr.io/distroless/base-debian11:nonroot
+  COPY --from=build /build-app/app /usr/bin/
+  CMD ["app"]
+#+end_src
+
+*** ECL
+
+#+begin_src dockerfile
+  FROM ogimart/ecl-dev:latest AS build
+
+  WORKDIR /build-app
+  COPY . .
+  RUN make clean && make ecl-app
+
+  FROM gcr.io/distroless/base-debian11:nonroot
+  COPY --from=build /usr/local/lib/libecl.so.21.2.1 /usr/lib/libecl.so.21.2
+  COPY --from=build /build-app/app /usr/bin/
+  CMD ["app"]
+#+end_src
+
+** Size
+
+/Hello World/ App image size (without lisp image compression):
+
+- SBCL **58.7** MB
+- ECL **33.6** MB
+
+The size of /distroless/base-debian11/ without app and libs is 17.5MB.
+
+/Hello World/ application with no dependencies:
+
+#+begin_src lisp
+    (defpackage :app
+		(:use :cl)
+		(:export :main))
+    (in-package :app)
+
+    (defun main ()
+      (format t "Hello Lisp!~%"))
+#+end_src
+
+ASDF System:
+
+#+begin_src lisp
+  (asdf:defsystem #:app
+    :serial t
+    :components ((:file "app")))
+#+end_src
+
+Build script:
+
+#+begin_src lisp
+  (require 'asdf)
+  (push "./" asdf:*central-registry*)
+  (asdf:load-system :app)
+
+  ,#+sbcl (sb-ext:save-lisp-and-die #P"app"
+				   :toplevel #'app:main
+				   :executable t)
+
+  ,#+ecl (asdf:make-build :app
+			 :type :program
+			 :move-here #P"./"
+			 :epilogue-code '(app:main))
+  ,#+ecl (si:exit)
+#+end_src
+
+** Remote REPL Image
+
+**Debian 11 (bullseye) Slim**
+
+Uses base image, installs /quicklisp/ and /sly/, and runs /slynk/ repl server.
