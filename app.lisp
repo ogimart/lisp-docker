@@ -1,6 +1,6 @@
 (defpackage :app
-	    (:use :cl)
-	    (:export :main))
+  (:use :cl)
+  (:export :main))
 (in-package :app)
 
 (defun main ()

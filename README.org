@@ -56,13 +56,13 @@ The size of /distroless/base-debian11/ without app and libs is 17.5MB.
 /Hello World/ application with no dependencies:
 
 #+begin_src lisp
-    (defpackage :app
-		(:use :cl)
-		(:export :main))
-    (in-package :app)
+  (defpackage :app
+    (:use :cl)
+    (:export :main))
+  (in-package :app)
 
-    (defun main ()
-      (format t "Hello Lisp!~%"))
+  (defun main ()
+    (format t "Hello Lisp!~%"))
 #+end_src
 
 ASDF System:
