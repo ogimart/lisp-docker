@@ -4,13 +4,13 @@ Minimal Common Lisp (SBCL, ECL) Docker images
 
 ** Base Image
 
-**Debian 11 (bullseye) Slim**
+*Debian 11 (bullseye) Slim*
 
 The base image is used to build Common Lisp from source.
 
 ** Deployment Image
 
-**Distroless Debian 11**
+*Distroless Debian 11*
 
 Uses base image to build standalone application, then copies the executable to
 [[https://github.com/GoogleContainerTools/distroless][distroless]] /nonroot/ deployment image.
@@ -48,8 +48,8 @@ Uses base image to build standalone application, then copies the executable to
 
 /Hello World/ App image size (without lisp image compression):
 
-- SBCL **58.7** MB
-- ECL **33.6** MB
+- SBCL *58.7* MB
+- ECL *33.6* MB
 
 The size of /distroless/base-debian11/ without app and libs is 17.5MB.
 
@@ -93,6 +93,6 @@ Build script:
 
 ** Remote REPL Image
 
-**Debian 11 (bullseye) Slim**
+*Debian 11 (bullseye) Slim*
 
 Uses base image, installs /quicklisp/ and /sly/, and runs /slynk/ repl server.
